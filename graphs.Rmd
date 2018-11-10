@@ -1,0 +1,61 @@
+---
+title: "315_graphs"
+author: "Shreya Prakash"
+date: "November 9, 2018"
+output: html_document
+---
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+
+cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
+shreyap_315_theme <-  theme_bw() + 
+  theme(axis.text = element_text(color = "darkslategrey"),
+        text = element_text(color = "dark blue"))
+```
+
+
+```{r, message=FALSE, warning=FALSE}
+countries <- read.csv("countriesoftheworld2.csv")
+countries$Climate <- factor(countries$Climate)
+countries$X <- NULL
+colnames(countries) <- c("Country", "Region", "Population", "Area", 
+                         "Pop_Density", "Coastline", "Net_Migration",
+                         "Infant_Mortality", "GDP_per_cap", "Literacy_Rate",
+                         "Phones", "Arable", "Crops", "Other", "Climate",
+                         "Birthrate", "Deathrate", "Agriculture", "Industry",
+                         "Service")
+```
+
+
+```{r, message=FALSE, warning=FALSE}
+cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#000000", "")
+
+ggplot(countries, aes(x = GDP_per_cap, fill = Region)) + 
+  geom_histogram(alpha = 0.7, bins = 15, col = "black") + 
+  labs(
+    title = "Distribution of GDP per Capita",
+    x = "GDP per Capita",
+    y = "Frequency of GDP per Capita",
+    fill = "Region"
+  ) + shreyap_315_theme + scale_fill_brewer(palette="Spectral")
+```
+
++ The Distribution of GDP per Capita is skewed right
++ Regions like Sub-Saharan Africa and Oceania have lower GDP per Capita compared to regions like North America and Western Europe
+
+```{r, message=FALSE, warning=FALSE}
+ggplot(countries, aes(y = log(GDP_per_cap), x = Birthrate)) + 
+  geom_point(aes(color = Region)) + 
+  geom_smooth(method = lm, se = FALSE) + 
+  labs(
+    title = "Log of GDP per Capita vs Birthrate",
+    x = "Birthrate",
+    y = "Log of GDP per Capita"
+  ) + shreyap_315_theme + scale_color_brewer(palette="Spectral")
+```
+
++ Birth rate is negatively linearly related to log of the GDP per Capita. 
++ Regions like Sub-Saharan Africa have high birth rate and low log GDP per Capita
++ Regions like Western Europe have low birth rate and high log GDP per capita.
