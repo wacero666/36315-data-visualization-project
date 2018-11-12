@@ -1,0 +1,70 @@
+---
+title: "wanhez_graphs"
+author: "Wanhe Zhao"
+date: "11/12/2018"
+output: html_document
+---
+
+```{r, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(MASS)
+cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
+shreyap_315_theme <-  theme_bw() + 
+  theme(axis.text = element_text(color = "darkslategrey"),
+        text = element_text(color = "dark blue"))
+```
+
+```{r, message=FALSE, warning=FALSE}
+countries <- read.csv("countriesoftheworld2.csv")
+countries$Climate <- factor(countries$Climate)
+countries$X <- NULL
+colnames(countries) <- c("Country", "Region", "Population", "Area", 
+                         "Pop_Density", "Coastline", "Net_Migration",
+                         "Infant_Mortality", "GDP_per_cap", "Literacy_Rate",
+                         "Phones", "Arable", "Crops", "Other", "Climate",
+                         "Birthrate", "Deathrate", "Agriculture", "Industry",
+                         "Service")
+```
+
+
+
+```{r, message=FALSE, warning=FALSE}
+ggplot(countries, aes(y = log(GDP_per_cap), x = Literacy_Rate)) + 
+  geom_point(aes(color = Region)) + 
+  geom_smooth(method = lm, se = FALSE) +
+  labs(
+    title = "Log of GDP per Capita vs Literacy Rate",
+    x = "Literacy Rate",
+    y = "Log of GDP per Capita"
+  ) + shreyap_315_theme + scale_color_brewer(palette="Spectral")
+```
+
+
++ There is a positive relatioship between literacy rate and log of the GDP per Capita. Approximately polynomial relationship.   
++ Literacy rate mostly depends on regions. Like sub-Saharan Africa, northern Africa and Latin America are lower litercy rate and GDP per capita. 
++ However, some regions show apparent high literacy rate like Western Europe, which has high literacy rate and high log GDP per capita.
+
+
+```{r, warning = FALSE, message = FALSE}
+library(rworldmap)
+countries2 <- read.csv("countriesoftheworld.csv", dec = ",")
+
+countries2$X <- NULL
+colnames(countries2) <- c("Country", "Region", "Population", "Area", 
+                         "Pop_Density", "Coastline", "Net_Migration",
+                         "Infant_Mortality", "GDP_per_cap", "Literacy_Rate",
+                         "Phones", "Arable", "Crops", "Other", "Climate",
+                         "Birthrate", "Deathrate", "Agriculture", "Industry",
+                         "Service")
+countries2 <- countries2[!is.na(countries2$Literacy_Rate),]
+spdf <- joinCountryData2Map(countries2, joinCode="NAME", nameJoinColumn="Country")
+
+mapCountryData(spdf, nameColumnToPlot="Literacy_Rate", catMethod="fixedWidth", colourPalette = "diverging", mapTitle = "Literacy Rate by Countries") 
+```
+
++ Majority of the countries Literacy Rate are above 50 percentages
++ Countries in Africa shows relatively lower literacy rate
++ Litercy Rates are divergent between regions. 
+
+
