@@ -1,0 +1,68 @@
+---
+title: "masaherm_graphs"
+author: "Masahero Masuda"
+date: "11/12/2018"
+output: html_document
+---
+
+```{r, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(MASS)
+cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
+shreyap_315_theme <-  theme_bw() + 
+  theme(axis.text = element_text(color = "darkslategrey"),
+        text = element_text(color = "dark blue"))
+```
+
+```{r, message=FALSE, warning=FALSE}
+library(dplyr)
+library(reshape2)
+library(gridExtra)
+countries <- read.csv("countriesoftheworld2.csv")
+agg.countries <- aggregate(countries, by = list(countries$Region), mean)
+
+
+agriculture <- ggplot(agg.countries) +
+    geom_bar(aes(x = Group.1,y = Agriculture),stat = "identity", 
+             fill = "green") +
+    shreyap_315_theme + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 1)) +
+    labs(title = "Agriculture", x = "Region")
+
+industry <- ggplot(agg.countries) +
+    geom_bar(aes(x = Group.1, y = Industry), stat ="identity",
+             fill = "blue") +
+    shreyap_315_theme +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 1)) +
+    labs(title = "Industry", x = "Region")
+
+service <- ggplot(agg.countries) +
+    geom_bar(aes(x = Group.1, y = Service), stat ="identity",
+             fill = "red") +
+    shreyap_315_theme +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 1)) +
+    labs(title = "Service", x = "Region")
+
+grid.arrange(agriculture, industry, service, ncol = 3)
+```
+
+It is apparent from the graph that Sub-Saharan Africa has the highest percentages of those working in agriculture. On the other hand Near East and Northern American regions have the highest percentages of Industry-related jobs, which is sensible since these regions are more developed compared to others. Finally Northern America and Western Europe have the highest percentages of service-related jobs compared to other regions, which again is related to their development as a nation.
+
+
+```{r, warning = FALSE, message = FALSE}
+library(ggmap)
+library(rworldmap)
+library(maptools)
+library(maps)
+
+#mp <- NULL
+#mapWorld <- borders("world", colour="gray50", fill="gray50")
+#mp <- ggplot() + mapWorld
+#mp <- joinCountryData2Map(countries, joinCode="NAME", nameJoinColumn="Country")
+
+spdf <- joinCountryData2Map(countries, joinCode="NAME", nameJoinColumn="Country")
+
+mapCountryData(spdf, nameColumnToPlot="Phones..per.1000.", catMethod="fixedWidth", colourPalette = "diverging", mapTitle = "Number of Phones per 1000") 
+```
+
