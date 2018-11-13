@@ -1,0 +1,59 @@
+---
+title: "315 Project Draft"
+author: "Minami Makino"
+date: "11/11/2018"
+output: 
+  html_document:
+    toc:  true
+    toc_float:  true
+    code_folding:  hide
+---
+
+```{r}
+library(tidyverse)
+countries_of_the_world <- read.csv("/Users/minamimakino/Documents/countriesoftheworld2.csv")
+```
+
+
+We are first looking at the continuous variables of literacy and GDP of the countries of the world dataset. From this dendrogram, we can see that the right side has a higher ratio of more relations compared to the left side where there are fewer variables that have relations to each other.
+```{r, warning = F, message = F}
+library(dendextend)
+countries_subset <- countries_of_the_world[,9:10]
+countries_subset_scale <- scale(countries_subset)
+dist_countries_subset_scale <- dist(countries_subset_scale, method = "euclidean")
+hc_countries_complete <- hclust(dist_countries_subset_scale, method = "complete")
+plot(hc_countries_complete)
+```
+
+
+```{r}
+countries_of_the_world <- mutate(countries_of_the_world, 
+                                 Region = factor(Region))
+
+countries_cont <- countries_of_the_world %>% select(Phones..per.1000., Population, Area..sq..mi.., GDP....per.capita., Pop..Density..per.sq..mi.., Coastline..coast.area.ratio., Net.migration, Infant.mortality..per.1000.births., Literacy...., Birthrate, Deathrate)
+
+countries_cont_scale <- scale(countries_cont)
+
+dist_countries_cont <- dist(countries_cont_scale)
+
+countries_new <- cmdscale(dist_countries_cont)
+
+countries_new <- data.frame(countries_new)
+
+colnames(countries_new) <- c("coordinate_1", "coordinate_2")
+
+countries_new <- countries_new %>% mutate(Region = countries_of_the_world$Region)
+
+
+
+ggplot(data = countries_new, 
+       aes(x = coordinate_1, y = coordinate_2)) +
+  geom_point(aes(color = Region),
+             size = 2, alpha = 0.8) +
+  geom_density2d(h = c(3, 3)) +
+  labs(x = "Coordinate 1", 
+       y = "Coordinate 2", 
+       color = "Region",
+       title = "Compression of Countries of the World") 
+```
+
