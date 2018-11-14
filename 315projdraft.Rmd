@@ -11,18 +11,45 @@ output:
 
 ```{r}
 library(tidyverse)
-countries_of_the_world <- read.csv("/Users/minamimakino/Documents/countriesoftheworld2.csv")
+countries <- read.csv("countriesoftheworld2.csv")
+countries$Climate <- factor(countries$Climate)
+countries$X <- NULL
+colnames(countries) <- c("Country", "Region", "Population", "Area", 
+                         "Pop_Density", "Coastline", "Net_Migration",
+                         "Infant_Mortality", "GDP_per_cap", "Literacy_Rate",
+                         "Phones", "Arable", "Crops", "Other", "Climate",
+                         "Birthrate", "Deathrate", "Agriculture", "Industry",
+                         "Service")
+
+cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
+shreyap_315_theme <-  theme_bw() + 
+  theme(axis.text = element_text(color = "darkslategrey"),
+        text = element_text(color = "dark blue"))
 ```
 
 
-We are first looking at the continuous variables of literacy and GDP of the countries of the world dataset. From this dendrogram, we can see that the right side has a higher ratio of more relations compared to the left side where there are fewer variables that have relations to each other.
-```{r, warning = F, message = F}
+We are first looking at the continuous variables of literacy, GDP, birthrate, deathrate, agriculture, industry, and service of the countries of the world dataset. From this dendrogram, we can see that these continuous variables do a pretty good job of clusifing the Western European and African regions which correspond to the highest and lowest GDPs respectively.
+
+```{r, warning = F, message = F, fig.width = 9, fig.height = 20}
 library(dendextend)
-countries_subset <- countries_of_the_world[,9:10]
-countries_subset_scale <- scale(countries_subset)
-dist_countries_subset_scale <- dist(countries_subset_scale, method = "euclidean")
-hc_countries_complete <- hclust(dist_countries_subset_scale, method = "complete")
-plot(hc_countries_complete)
+
+countries_cont <- dplyr::select(countries, GDP_per_cap, Literacy_Rate, 
+                           Birthrate, Deathrate, Agriculture,
+                           Industry, Service)
+
+dend <- countries_cont %>% scale %>% dist %>% hclust %>% as.dendrogram
+
+get_colors <- function(x, palette = cbbPalette) palette[match(x, unique(x))]
+
+dend %>% set("labels", countries_of_the_world$Country, order_value = TRUE) %>% 
+  set("labels_col", get_colors(countries_of_the_world$Region), order_value = TRUE)  %>% 
+  ggplot(horiz = T) + 
+  labs(
+    title = "Cluster Dendogram of Countries Regions",
+    y = "Pairwise Euclidean Distance",
+    x = ""
+  )
 ```
 
 
@@ -30,7 +57,7 @@ plot(hc_countries_complete)
 countries_of_the_world <- mutate(countries_of_the_world, 
                                  Region = factor(Region))
 
-countries_cont <- countries_of_the_world %>% select(Phones..per.1000., Population, Area..sq..mi.., GDP....per.capita., Pop..Density..per.sq..mi.., Coastline..coast.area.ratio., Net.migration, Infant.mortality..per.1000.births., Literacy...., Birthrate, Deathrate)
+countries_cont <- countries_of_the_world %>% select(Population, Area..sq..mi.., GDP....per.capita., Pop..Density..per.sq..mi.., Coastline..coast.area.ratio., Net.migration, Infant.mortality..per.1000.births., Literacy...., Birthrate, Deathrate)
 
 countries_cont_scale <- scale(countries_cont)
 
@@ -48,12 +75,14 @@ countries_new <- countries_new %>% mutate(Region = countries_of_the_world$Region
 
 ggplot(data = countries_new, 
        aes(x = coordinate_1, y = coordinate_2)) +
+  geom_density2d(h = c(3, 3)) +
   geom_point(aes(color = Region),
              size = 2, alpha = 0.8) +
-  geom_density2d(h = c(3, 3)) +
-  labs(x = "Coordinate 1", 
-       y = "Coordinate 2", 
+  labs(x = "MDS Coordinate 1", 
+       y = "MDS Coordinate 2", 
        color = "Region",
-       title = "Compression of Countries of the World") 
+       title = "Compression of Countries of the World") + 
+  shreyap_315_theme + scale_color_brewer(palette="Spectral")
 ```
 
+Can see that there is clustering for regions again when across Population, Literacy rate, and GDP.
