@@ -19,32 +19,25 @@ shreyap_315_theme <-  theme_bw() +
 library(dplyr)
 library(reshape2)
 library(gridExtra)
+
 countries <- read.csv("countriesoftheworld2.csv")
 agg.countries <- aggregate(countries, by = list(countries$Region), mean)
+agg_countries_industries <- dplyr::select(agg.countries, Agriculture, 
+                                          Industry, Service, Group.1)
 
+dat.m <- melt(agg_countries_industries, id.vars = "Group.1")
 
-agriculture <- ggplot(agg.countries) +
-    geom_bar(aes(x = Group.1,y = Agriculture),stat = "identity", 
-             fill = "green") +
-    shreyap_315_theme + 
-    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 1)) +
-    labs(title = "Agriculture", x = "Region")
+ggplot(dat.m, aes(x = Group.1, y = value, fill=variable)) +
+    geom_bar(stat='identity') + 
+  shreyap_315_theme +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) +
+    labs(
+         title = "Proportion of Industy for each Region", 
+         x = "Region",
+         y = "Proportion of Industry", 
+         fill = "Industry"
+         )
 
-industry <- ggplot(agg.countries) +
-    geom_bar(aes(x = Group.1, y = Industry), stat ="identity",
-             fill = "blue") +
-    shreyap_315_theme +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 1)) +
-    labs(title = "Industry", x = "Region")
-
-service <- ggplot(agg.countries) +
-    geom_bar(aes(x = Group.1, y = Service), stat ="identity",
-             fill = "red") +
-    shreyap_315_theme +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 1)) +
-    labs(title = "Service", x = "Region")
-
-grid.arrange(agriculture, industry, service, ncol = 3)
 ```
 
 It is apparent from the graph that Sub-Saharan Africa has the highest percentages of those working in agriculture. On the other hand Near East and Northern American regions have the highest percentages of Industry-related jobs, which is sensible since these regions are more developed compared to others. Finally Northern America and Western Europe have the highest percentages of service-related jobs compared to other regions, which again is related to their development as a nation.
