@@ -42,8 +42,8 @@ dend <- countries_cont %>% scale %>% dist %>% hclust %>% as.dendrogram
 
 get_colors <- function(x, palette = cbbPalette) palette[match(x, unique(x))]
 
-dend %>% set("labels", countries$Country, order_value = TRUE) %>% 
-  set("labels_col", get_colors(countries$Region), order_value = TRUE)  %>% 
+dend %>% set("labels", countries_of_the_world$Country, order_value = TRUE) %>% 
+  set("labels_col", get_colors(countries_of_the_world$Region), order_value = TRUE)  %>% 
   ggplot(horiz = T) + 
   labs(
     title = "Cluster Dendogram of Countries Regions",
@@ -57,6 +57,10 @@ dend %>% set("labels", countries$Country, order_value = TRUE) %>%
 countries <- mutate(countries, 
                                  Region = factor(Region))
 
+countries_cont <- countries %>% select(Population, GDP_per_cap, Literacy_Rate, 
+                           Birthrate, Deathrate, Agriculture,
+                           Industry, Service)
+
 countries_cont_scale <- scale(countries_cont)
 
 dist_countries_cont <- dist(countries_cont_scale)
@@ -67,7 +71,7 @@ countries_new <- data.frame(countries_new)
 
 colnames(countries_new) <- c("coordinate_1", "coordinate_2")
 
-countries_new <- countries_new %>% mutate(Region = countries_of_the_world$Region)
+countries_new <- countries_new %>% mutate(Region = countries$Region)
 
 
 
