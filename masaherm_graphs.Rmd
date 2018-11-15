@@ -12,13 +12,15 @@ cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2"
 
 shreyap_315_theme <-  theme_bw() + 
   theme(axis.text = element_text(color = "darkslategrey"),
-        text = element_text(color = "dark blue"))
+        text = element_text(color = "dark blue", size = 30), legend.key.size = unit(5, "lines"))
 ```
 
 ```{r, message=FALSE, warning=FALSE}
 library(dplyr)
 library(reshape2)
 library(gridExtra)
+
+pdf("/Users/shreyaprakash/Documents/36315/Graphics_Project/industry.pdf", width=20, height=16,onefile=T)
 
 countries <- read.csv("countriesoftheworld2.csv")
 agg.countries <- aggregate(countries, by = list(countries$Region), mean)
@@ -27,24 +29,23 @@ agg_countries_industries <- dplyr::select(agg.countries, Agriculture,
 
 dat.m <- melt(agg_countries_industries, id.vars = "Group.1")
 
-ggplot(dat.m, aes(x = Group.1, y = value, fill=variable)) +
+industry <- ggplot(dat.m, aes(x = trimws(Group.1), y = value, fill=variable)) +
     geom_bar(stat='identity') + 
   shreyap_315_theme +
-    theme(axis.text.x = element_text(angle = 55, hjust = 0.75, vjust = .9, size = 6, ), legend.text.align = 0) +
+    theme(axis.text.x = element_text(angle = 55, hjust = 0.75, vjust = 0.8, size = 6, ), legend.text.align = 0) +
     labs(
          title = "Proportion of Industy for each Region", 
          x = "Region",
          y = "Proportion of Industry", 
          fill = "Industry"
          )
-
+print(industry)
 ```
 
 It is apparent from the graph that Sub-Saharan Africa has the highest percentages of those working in agriculture. On the other hand Near East and Northern American regions have the highest percentages of Industry-related jobs, which is sensible since these regions are more developed compared to others. Finally Northern America and Western Europe have the highest percentages of service-related jobs compared to other regions, which again is related to their development as a nation.
 
 
 ```{r, warning = FALSE, message = FALSE}
-library(ggmap)
 library(rworldmap)
 library(maptools)
 library(maps)

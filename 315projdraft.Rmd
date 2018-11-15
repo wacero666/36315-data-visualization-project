@@ -21,11 +21,12 @@ colnames(countries) <- c("Country", "Region", "Population", "Area",
                          "Birthrate", "Deathrate", "Agriculture", "Industry",
                          "Service")
 
-cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+cbbPalette = c("royalblue", 'dodgerblue','grey',"aquamarine4", "orange", 'indianred', "darkviolet", "darkgreen", "goldenrod3", "burlywood4", "deeppink4")
+
 
 shreyap_315_theme <-  theme_bw() + 
   theme(axis.text = element_text(color = "darkslategrey"),
-        text = element_text(color = "dark blue"))
+        text = element_text(color = "dark blue", size = 30), legend.key.size = unit(5, "lines"))
 ```
 
 
@@ -33,7 +34,7 @@ We are first looking at the continuous variables of literacy, GDP, birthrate, de
 
 ```{r, warning = F, message = F}
 library(dendextend)
-
+pdf("/Users/shreyaprakash/Documents/36315/Graphics_Project/Dendro3.pdf", width=20, height=30,onefile=T)
 countries_cont <- dplyr::select(countries, GDP_per_cap, Literacy_Rate, 
                            Birthrate, Deathrate, Agriculture,
                            Industry, Service)
@@ -42,20 +43,24 @@ dend <- countries_cont %>% scale %>% dist %>% hclust %>% as.dendrogram
 
 get_colors <- function(x, palette = cbbPalette) palette[match(x, unique(x))]
 
-dend %>% set("labels", countries$Country, order_value = TRUE) %>% 
-  set("labels_col", get_colors(countries$Region), order_value = TRUE)  %>% 
-  ggplot() + 
+
+dendro_plot <- dend %>% set("labels", trimws(countries$Region), order_value = TRUE) %>% 
+  set("labels_col", get_colors(countries$Region), order_value = TRUE) %>% set("labels_cex", .6) %>%
+  ggplot(horiz = T) + 
   labs(
     title = "Cluster Dendogram of Countries Regions",
     y = "Pairwise Euclidean Distance",
     x = ""
-  )
+  ) + 
+  theme(axis.text = element_text(color = "darkslategrey"),
+        text = element_text(color = "dark blue", size = 40), legend.key.size = unit(5, "lines"))
 
-ggsave("")
+print(dendro_plot)
 ```
 
 
 ```{r}
+pdf("/Users/shreyaprakash/Documents/36315/Graphics_Project/Density.pdf", width=20, height=12,onefile=T)
 countries <- mutate(countries, 
                                  Region = factor(Region))
 
@@ -73,11 +78,11 @@ countries_new <- countries_new %>% mutate(Region = countries$Region)
 
 
 
-ggplot(data = countries_new, 
+density <- ggplot(data = countries_new, 
        aes(x = coordinate_1, y = coordinate_2)) +
   geom_density2d(h = c(1.25, 3)) +
   geom_point(aes(color = Region),
-             size = 1.5, alpha = 0.8) +
+             size = 5, alpha = 0.8) +
   xlim(-4, 6) + 
   ylim(-3.5, 5.2) +
   labs(x = "MDS Coordinate 1", 
@@ -85,6 +90,8 @@ ggplot(data = countries_new,
        color = "Region",
        title = "Compression of Countries of the World") + 
   shreyap_315_theme + scale_color_brewer(palette="Spectral")
+
+print(density)
 ```
 
 Can see that there is clustering for regions again when across Population, Literacy rate, and GDP.

@@ -12,7 +12,7 @@ cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2"
 
 shreyap_315_theme <-  theme_bw() + 
   theme(axis.text = element_text(color = "darkslategrey"),
-        text = element_text(color = "dark blue"))
+        text = element_text(color = "dark blue", size = 30), legend.key.size = unit(5, "lines"))
 ```
 
 
@@ -30,9 +30,11 @@ colnames(countries) <- c("Country", "Region", "Population", "Area",
 
 
 ```{r, message=FALSE, warning=FALSE}
+pdf("/Users/shreyaprakash/Documents/36315/Graphics_Project/hist.pdf", width=20, height=16,onefile=T)
+
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#000000", "")
 
-ggplot(countries, aes(x = GDP_per_cap, fill = Region)) + 
+hist_gdp <- ggplot(countries, aes(x = GDP_per_cap, fill = Region)) + 
   geom_histogram(alpha = 0.7, bins = 15, col = "black") + 
   labs(
     title = "Distribution of GDP per Capita",
@@ -40,20 +42,26 @@ ggplot(countries, aes(x = GDP_per_cap, fill = Region)) +
     y = "Frequency of GDP per Capita",
     fill = "Region"
   ) + shreyap_315_theme + scale_fill_brewer(palette="Spectral")
+
+print(hist_gdp)
 ```
 
 + The Distribution of GDP per Capita is skewed right
 + Regions like Sub-Saharan Africa and Oceania have lower GDP per Capita compared to regions like North America and Western Europe
 
 ```{r, message=FALSE, warning=FALSE}
-ggplot(countries, aes(y = log(GDP_per_cap), x = Birthrate)) + 
-  geom_point(aes(color = Region)) + 
+pdf("/Users/shreyaprakash/Documents/36315/Graphics_Project/birth.pdf", width=20, height=16,onefile=T)
+
+birth <- ggplot(countries, aes(y = log(GDP_per_cap), x = Birthrate)) + 
+  geom_point(aes(color = Region), size = 5) + 
   geom_smooth(method = lm, se = FALSE) + 
   labs(
     title = "Log of GDP per Capita vs Birthrate",
     x = "Birthrate",
     y = "Log of GDP per Capita"
   ) + shreyap_315_theme + scale_color_brewer(palette="Spectral")
+
+print(birth)
 ```
 
 + Birth rate is negatively linearly related to log of the GDP per Capita. 
