@@ -27,6 +27,9 @@ colnames(countries) <- c("Country", "Region", "Population", "Area",
                          "Service")
 ```
 
+```{r}
+as.character(countries$Region[2])
+```
 
 
 ```{r, message=FALSE, warning=FALSE}
@@ -47,6 +50,8 @@ ggplot(countries, aes(y = log(GDP_per_cap), x = Literacy_Rate)) +
 
 
 ```{r, warning = FALSE, message = FALSE}
+pdf("/Users/wanhezhao/Box Sync/Fall2018/36315/project 1/Graphs/Literacy.pdf", width=12, height=8,onefile=T)
+
 library(rworldmap)
 countries2 <- read.csv("countriesoftheworld.csv", dec = ",")
 
@@ -60,11 +65,44 @@ colnames(countries2) <- c("Country", "Region", "Population", "Area",
 countries2 <- countries2[!is.na(countries2$Literacy_Rate),]
 spdf <- joinCountryData2Map(countries2, joinCode="NAME", nameJoinColumn="Country")
 
-mapCountryData(spdf, nameColumnToPlot="Literacy_Rate", catMethod="fixedWidth", colourPalette = "diverging", mapTitle = "Literacy Rate by Countries") 
+plot3 <- mapCountryData(spdf, nameColumnToPlot="Literacy_Rate", catMethod="fixedWidth", colourPalette = c("royalblue", 'dodgerblue','grey',"yellow", "orange", 'indianred'), mapTitle = "Literacy Rate by Countries") 
+print(plot3)
+
 ```
+
+```{r}
+library(rworldmap)
+pdf("/Users/wanhezhao/Box Sync/Fall2018/36315/project 1/Graphs/service.pdf", width=12, height=8,onefile=T)
+
+countries2 <- read.csv("countriesoftheworld.csv", dec = ",")
+
+countries2$X <- NULL
+colnames(countries2) <- c("Country", "Region", "Population", "Area", 
+                         "Pop_Density", "Coastline", "Net_Migration",
+                         "Infant_Mortality", "GDP_per_cap", "Literacy_Rate",
+                         "Phones", "Arable", "Crops", "Other", "Climate",
+                         "Birthrate", "Deathrate", "Agriculture", "Industry",
+                         "Service")
+countries2 <- countries2[!is.na(countries2$Service),]
+spdf <- joinCountryData2Map(countries2, joinCode="NAME", nameJoinColumn="Country")
+
+plot1 <- mapCountryData(spdf, nameColumnToPlot="Service", catMethod="fixedWidth", colourPalette = c("royalblue", 'dodgerblue','darkolivegreen1',"yellow", "orange", 'indianred'), mapTitle = "Service Sector and GDP per Capita by Countries") 
+
+plot2 <- mapBubbles(spdf,nameZSize='GDP_per_cap',  nameZColour = adjustcolor("navy", alpha.f = 0.7),add = T, fill=TRUE, addColourLegend = F, addLegend = F, pch=21, symbolSize=.2,catMethod="fixedWidth")
+print(plot1)
+print(plot2)
+```
+
+```
+plot2 <- mapBubbles(spdf,nameZSize='GDP_per_cap', nameZColour='navy', colourPalette = "red",add = T, 
+     addColourLegend = F, addLegend = F, pch=21, symbolSize=.2,catMethod="fixedWidth",  alpha.f = 0.5)
+
+print(plot1)
+print(plot2)
+```
+
 
 + Majority of the countries Literacy Rate are above 50 percentages
 + Countries in Africa shows relatively lower literacy rate
 + Litercy Rates are divergent between regions. 
-
 
