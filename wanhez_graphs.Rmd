@@ -32,7 +32,7 @@ colnames(countries) <- c("Country", "Region", "Population", "Area",
 ```{r, message=FALSE, warning=FALSE}
 ggplot(countries, aes(y = log(GDP_per_cap), x = Literacy_Rate)) + 
   geom_point(aes(color = Region)) + 
-  geom_smooth(method = lm, se = FALSE) +
+  geom_smooth(method = loess, se = FALSE) +
   labs(
     title = "Log of GDP per Capita vs Literacy Rate",
     x = "Literacy Rate",
