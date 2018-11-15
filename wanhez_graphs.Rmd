@@ -12,7 +12,7 @@ cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2"
 
 shreyap_315_theme <-  theme_bw() + 
   theme(axis.text = element_text(color = "darkslategrey"),
-        text = element_text(color = "dark blue"))
+        text = element_text(color = "dark blue", size = 30), legend.key.size = unit(5, "lines"))
 ```
 
 ```{r, message=FALSE, warning=FALSE}
@@ -33,14 +33,17 @@ as.character(countries$Region[2])
 
 
 ```{r, message=FALSE, warning=FALSE}
-ggplot(countries, aes(y = log(GDP_per_cap), x = Literacy_Rate)) + 
-  geom_point(aes(color = Region)) + 
+pdf("/Users/shreyaprakash/Documents/36315/Graphics_Project/Scatter_Lit.pdf", width=20, height=16,onefile=T)
+
+gdp_lit <- ggplot(countries, aes(y = log(GDP_per_cap), x = Literacy_Rate)) + 
+  geom_point(aes(color = Region), size = 5) + 
   geom_smooth(method = loess, se = FALSE) +
   labs(
     title = "Log of GDP per Capita vs Literacy Rate",
     x = "Literacy Rate",
     y = "Log of GDP per Capita"
   ) + shreyap_315_theme + scale_color_brewer(palette="Spectral")
+print(gdp_lit)
 ```
 
 
@@ -50,7 +53,7 @@ ggplot(countries, aes(y = log(GDP_per_cap), x = Literacy_Rate)) +
 
 
 ```{r, warning = FALSE, message = FALSE}
-pdf("/Users/wanhezhao/Box Sync/Fall2018/36315/project 1/Graphs/Literacy.pdf", width=12, height=8,onefile=T)
+pdf("/Users/shreyaprakash/Documents/36315/Graphics_Project/Literacy.pdf", width=24, height=18,onefile=T)
 
 library(rworldmap)
 countries2 <- read.csv("countriesoftheworld.csv", dec = ",")
@@ -65,14 +68,16 @@ colnames(countries2) <- c("Country", "Region", "Population", "Area",
 countries2 <- countries2[!is.na(countries2$Literacy_Rate),]
 spdf <- joinCountryData2Map(countries2, joinCode="NAME", nameJoinColumn="Country")
 
-plot3 <- mapCountryData(spdf, nameColumnToPlot="Literacy_Rate", catMethod="fixedWidth", colourPalette = c("royalblue", 'dodgerblue','grey',"yellow", "orange", 'indianred'), mapTitle = "Literacy Rate by Countries") 
+plot3 <- mapCountryData(spdf, nameColumnToPlot="Literacy_Rate", catMethod="fixedWidth", colourPalette = c("royalblue", 'dodgerblue','grey',"yellow", "orange", 'indianred'), mapTitle = "", oceanCol = "white") + 
+  shreyap_315_theme
+  
 print(plot3)
 
 ```
 
 ```{r}
 library(rworldmap)
-pdf("/Users/wanhezhao/Box Sync/Fall2018/36315/project 1/Graphs/service.pdf", width=12, height=8,onefile=T)
+pdf("/Users/shreyaprakash/Documents/36315/Graphics_Project/service.pdf", width=24, height=18,onefile=T)
 
 countries2 <- read.csv("countriesoftheworld.csv", dec = ",")
 
@@ -86,7 +91,7 @@ colnames(countries2) <- c("Country", "Region", "Population", "Area",
 countries2 <- countries2[!is.na(countries2$Service),]
 spdf <- joinCountryData2Map(countries2, joinCode="NAME", nameJoinColumn="Country")
 
-plot1 <- mapCountryData(spdf, nameColumnToPlot="Service", catMethod="fixedWidth", colourPalette = c("royalblue", 'dodgerblue','darkolivegreen1',"yellow", "orange", 'indianred'), mapTitle = "Service Sector and GDP per Capita by Countries") 
+plot1 <- mapCountryData(spdf, nameColumnToPlot="Service", catMethod="fixedWidth", colourPalette = c("royalblue", 'dodgerblue','darkolivegreen1',"yellow", "orange", 'indianred'), mapTitle = "", oceanCol = "white") 
 
 plot2 <- mapBubbles(spdf,nameZSize='GDP_per_cap',  nameZColour = adjustcolor("navy", alpha.f = 0.7),add = T, fill=TRUE, addColourLegend = F, addLegend = F, pch=21, symbolSize=.2,catMethod="fixedWidth")
 print(plot1)
