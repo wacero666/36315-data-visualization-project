@@ -31,7 +31,7 @@ shreyap_315_theme <-  theme_bw() +
 
 We are first looking at the continuous variables of literacy, GDP, birthrate, deathrate, agriculture, industry, and service of the countries of the world dataset. From this dendrogram, we can see that these continuous variables do a pretty good job of clusifing the Western European and African regions which correspond to the highest and lowest GDPs respectively.
 
-```{r, warning = F, message = F, fig.width = 9, fig.height = 20}
+```{r, warning = F, message = F}
 library(dendextend)
 
 countries_cont <- dplyr::select(countries, GDP_per_cap, Literacy_Rate, 
@@ -44,12 +44,14 @@ get_colors <- function(x, palette = cbbPalette) palette[match(x, unique(x))]
 
 dend %>% set("labels", countries$Country, order_value = TRUE) %>% 
   set("labels_col", get_colors(countries$Region), order_value = TRUE)  %>% 
-  ggplot(horiz = T) + 
+  ggplot() + 
   labs(
     title = "Cluster Dendogram of Countries Regions",
     y = "Pairwise Euclidean Distance",
     x = ""
   )
+
+ggsave("")
 ```
 
 
